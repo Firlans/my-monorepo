@@ -1,0 +1,43 @@
+# --- OS Generated ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# --- Editor / IDE ---
+.idea
+.vscode
+*.swp
+*.swo
+*~
+
+# --- Node / Package Managers ---
+node_modules/
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+npm-debug.log*
+lerna-debug.log*
+
+# --- Build Outputs / Dist ---
+dist
+dist-ssr
+*.local
+
+# --- Environment & Logs ---
+.env
+.env.local
+.env.*.local
+*.log
+
+# --- Vim ---
+*.swp
+*.swo
+
+# --- Misc ---
+*.pid
+*.seed
+
