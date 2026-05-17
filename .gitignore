@@ -40,4 +40,5 @@ dist-ssr
 # --- Misc ---
 *.pid
 *.seed
+apps/
 
