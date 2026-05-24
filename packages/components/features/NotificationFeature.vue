@@ -21,14 +21,14 @@ const message = computed(() => {
 
 const type = computed(() => {
   if (props.notification && props.notification.type !== undefined) {
-    return props.notification.type
+    return props.notification.type.value
   }
   return props.type
 })
 
 const duration = computed(() => {
   if (props.notification && props.notification.duration !== undefined) {
-    return props.notification.duration
+    return props.notification.duration.value
   }
   return props.duration
 })
@@ -38,6 +38,12 @@ const show = computed(() => {
     return props.notification.show.value
   }
   return localVisible.value
+})
+
+const containerClass = computed(() => {
+  return type.value === 'success'
+    ? 'border border-emerald-200 bg-emerald-50 text-emerald-700'
+    : 'border border-red-200 bg-red-50 text-red-700'
 })
 
 const handleClose = () => {
@@ -88,10 +94,10 @@ onUnmounted(() => { if (timer) clearTimeout(timer) })
 <template>
   <div v-if="show" class="fixed right-4 top-6 z-50 max-w-sm w-full">
     <div :class="[
-      'px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3 text-white',
-      type === 'success' ? 'bg-green-600' : 'bg-red-600'
+      'px-4 py-3 rounded-lg shadow-lg flex items-center space-x-3',
+      containerClass
     ]" class="transition-opacity duration-200">
-      <svg v-if="props.type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0"
+      <svg v-if="type === 'success'" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 flex-shrink-0"
         viewBox="0 0 20 20" fill="currentColor">
         <path fill-rule="evenodd"
           d="M16.707 5.293a1 1 0 00-1.414 0L8 12.586 4.707 9.293a1 1 0 00-1.414 1.414l4 4a1 1 0 001.414 0l8-8a1 1 0 000-1.414z"
@@ -108,7 +114,7 @@ onUnmounted(() => { if (timer) clearTimeout(timer) })
         {{ message }}
       </div>
 
-      <button @click="handleClose" class="text-white opacity-90 hover:opacity-100">
+      <button @click="handleClose" class="opacity-70 transition hover:opacity-100">
         <span class="text-lg leading-none">×</span>
       </button>
     </div>

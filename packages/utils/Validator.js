@@ -37,13 +37,24 @@ export class Validator {
     return this.errors[field] || ''
   }
 }
-export const required = (message = 'Required') => value =>
-  value ? '' : message
 
-export const email = (message = 'Invalid email') => value =>
+export const isEmptyValue = (value) => {
+  if (value === null || value === undefined) return true
+  if (typeof value === 'string') return value.trim() === ''
+  if (typeof value === 'number') return Number.isNaN(value)
+  if (typeof value === 'boolean') return value === false
+  if (Array.isArray(value)) return value.length === 0
+  if (value instanceof Date) return Number.isNaN(value.getTime())
+  return false
+}
+
+export const required = (message = 'Required') => (value) =>
+  isEmptyValue(value) ? message : ''
+
+export const email = (message = 'Invalid email') => (value) =>
   /^\S+@\S+\.\S+$/.test(value) ? '' : message
 
-export const minLength = (min, message) => value =>
+export const minLength = (min, message) => (value) =>
   value?.length >= min ? '' : message || `Minimum ${min} characters`
 
 export const sameAs = (field, message) => (value, props) =>

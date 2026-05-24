@@ -10,8 +10,8 @@ export class Notification {
   constructor({ duration = 2000 } = {}) {
     this.show = ref(false)
     this.message = ref('')
-    this.type = Notification.TYPES.SUCCESS
-    this.duration = Number.isFinite(duration) ? duration : 2000
+    this.type = ref(Notification.TYPES.SUCCESS)
+    this.duration = ref(Number.isFinite(duration) ? duration : 2000)
     this._timer = null
     this._container = null
     this._app = null
@@ -30,11 +30,11 @@ export class Notification {
     }
 
     if (type !== undefined) {
-      this.type = type
+      this.type.value = type
     }
 
     if (duration !== undefined) {
-      this.duration = Number.isFinite(duration) ? duration : 2000
+      this.duration.value = Number.isFinite(duration) ? duration : 2000
     }
 
     this.show.value = true
@@ -46,7 +46,7 @@ export class Notification {
     this._timer = setTimeout(() => {
       this.show.value = false
       this._timer = null
-    }, this.duration)
+    }, this.duration.value)
   }
 
   showSuccess(message, duration) {
