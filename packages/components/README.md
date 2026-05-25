@@ -5,8 +5,72 @@ Koleksi komponen Vue 3 yang dapat digunakan kembali (reusable) untuk proyek Vue.
 ## Daftar Isi
 
 - [BaseInput](#baseinput)
+- [BaseLookup](#baselookup)
 - [Instalasi](#instalasi)
 - [Konfigurasi](#konfigurasi)
+
+---
+
+## BaseLookup
+
+Komponen select lookup yang mengambil data dari endpoint API, lalu membentuk option berdasarkan field kunci dan field tampilan.
+
+Lookup akan otomatis memuat data saat komponen dirender, dan jika `modelValue` sudah terisi maka option dengan key yang cocok akan langsung terpilih.
+
+### Props
+
+| Prop | Tipe | Default | Deskripsi |
+|------|------|---------|-----------|
+| `modelValue` | `String \| Number` | `''` | Nilai terpilih untuk `v-model` |
+| `label` | `String` | `''` | Label field |
+| `placeholder` | `String` | `'-- Pilih --'` | Teks option kosong |
+| `route` | `String` | - | Endpoint lookup, contoh `http://localhost:8080/api/categories` |
+| `itemKey` | `String` | `'id'` | Nama field data yang dipakai sebagai value option |
+| `display` | `String` | `'name'` | Nama field data yang ditampilkan sebagai label option |
+| `auth` | `Boolean` | `false` | Saat `true`, request lookup mengirim `Authorization: Bearer <access_token>` dari localStorage |
+| `filter` | `Array` | `[]` | Filter lokal dengan format `{ junction, operator, column, value }` |
+
+> Catatan: Vue memakai `key` sebagai atribut internal virtual DOM, jadi prop lookup untuk field kunci dipakai dengan nama `itemKey`.
+
+### Events
+
+| Event | Payload | Deskripsi |
+|-------|---------|-----------|
+| `update:modelValue` | `String \| Number` | Dipicu saat pilihan berubah |
+| `loaded` | `Array` | Dipicu saat data berhasil diambil |
+| `error` | `String` | Dipicu saat request gagal |
+
+### Contoh Penggunaan
+
+```vue
+<script setup>
+import { ref } from 'vue'
+import BaseLookup from '@packages/components/base/BaseLookup.vue'
+
+const categoryId = ref('')
+
+const filters = [
+  {
+    junction: 'and',
+    operator: '=',
+    column: 'type',
+    value: 'expense'
+  }
+]
+</script>
+
+<template>
+  <BaseLookup
+    v-model="categoryId"
+    label="Kategori"
+    route="http://localhost:8080/api/categories"
+    item-key="id"
+    display="name"
+    :auth="true"
+    :filter="filters"
+  />
+</template>
+```
 
 ---
 
