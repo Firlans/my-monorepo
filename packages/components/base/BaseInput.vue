@@ -23,7 +23,7 @@ const props = defineProps({
 
   inputClass: {
     type: String,
-    default: 'base-input__control'
+    default: ''
   },
 
   wrapperClass: {
@@ -135,7 +135,7 @@ onMounted(() => {
 })
 
 const computedClass = computed(() => {
-  return [props.inputClass, displayError.value ? props.inputErrorClass : '']
+  return ['base-input__control', props.inputClass, displayError.value ? props.inputErrorClass : '']
     .filter(Boolean)
     .join(' ')
 })
