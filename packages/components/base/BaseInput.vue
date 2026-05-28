@@ -23,6 +23,36 @@ const props = defineProps({
 
   inputClass: {
     type: String,
+    default: 'base-input__control'
+  },
+
+  wrapperClass: {
+    type: String,
+    default: 'base-input'
+  },
+
+  labelClass: {
+    type: String,
+    default: 'base-input__label'
+  },
+
+  fieldWrapperClass: {
+    type: String,
+    default: 'base-input__field'
+  },
+
+  errorClass: {
+    type: String,
+    default: 'base-input__error'
+  },
+
+  inputErrorClass: {
+    type: String,
+    default: 'base-input__control--error'
+  },
+
+  rightSlotClass: {
+    type: String,
     default: ''
   },
 
@@ -42,19 +72,30 @@ const props = defineProps({
 const emit = defineEmits(['update:modelValue'])
 const touched = ref(false)
 
-const baseClass =
-  'w-full px-4 py-2 border rounded-lg focus:ring-2 transition'
-
-const errorClass =
-  'border-red-500 focus:ring-red-400'
-
-const normalClass =
-  'border-slate-300 focus:ring-blue-500'
-
 const inputRef = ref(null)
+const isMoneyType = computed(() => props.type === 'money')
+
+const normalizeMoneyValue = (value) => {
+  const digits = String(value ?? '').replace(/\D/g, '')
+  return digits
+}
+
+const formatMoneyDisplay = (value) => {
+  const digits = normalizeMoneyValue(value)
+  if (!digits) return ''
+  return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Number(digits))
+}
+
+const displayValue = computed(() => {
+  if (isMoneyType.value) return formatMoneyDisplay(props.modelValue)
+  return props.modelValue
+})
+
+const inputType = computed(() => (isMoneyType.value ? 'text' : props.type))
+const inputMode = computed(() => (isMoneyType.value ? 'numeric' : undefined))
 
 const isValueEmpty = (value) => {
-  if (props.type === 'number') {
+  if (props.type === 'number' || isMoneyType.value) {
     return value === '' || value === null || value === undefined || Number.isNaN(Number(value))
   }
   return isEmptyValue(value)
@@ -94,16 +135,19 @@ onMounted(() => {
 })
 
 const computedClass = computed(() => {
-  return [
-    baseClass,
-    displayError.value ? errorClass : normalClass,
-    props.inputClass,
-    'pr-12' // ruang untuk tombol kanan
-  ].join(' ')
+  return [props.inputClass, displayError.value ? props.inputErrorClass : '']
+    .filter(Boolean)
+    .join(' ')
 })
 
 const onInput = (event) => {
   touched.value = true
+  if (isMoneyType.value) {
+    const normalized = normalizeMoneyValue(event.target.value)
+    emit('update:modelValue', normalized)
+    event.target.value = formatMoneyDisplay(normalized)
+    return
+  }
   emit('update:modelValue', event.target.value)
 }
 
@@ -118,26 +162,64 @@ const onInvalid = (event) => {
 </script>
 
 <template>
-  <div class="space-y-1">
-    <label v-if="label" class="block text-sm font-medium text-slate-700">
+  <div :class="wrapperClass">
+    <label v-if="label" :class="labelClass">
       {{ label }}
     </label>
 
-    <div class="relative">
-      <input ref="inputRef" :type="type" :value="modelValue" :placeholder="placeholder" :class="computedClass"
+    <div :class="fieldWrapperClass">
+      <input ref="inputRef" :type="inputType" :inputmode="inputMode" :value="displayValue" :placeholder="placeholder" :class="computedClass"
         :required="required"
         @input="onInput"
         @blur="onBlur"
         @invalid="onInvalid" />
 
-      <!-- SLOT KANAN (opsional) -->
-      <div v-if="$slots.right" class="absolute inset-y-0 right-3 flex items-center">
+      <div v-if="$slots.right" :class="rightSlotClass">
         <slot name="right" />
       </div>
     </div>
 
-    <p v-if="displayError" class="text-sm text-red-500">
+    <p v-if="displayError" :class="errorClass">
       {{ displayError }}
     </p>
   </div>
 </template>
+
+<style scoped>
+.base-input {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.base-input__label {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.base-input__field {
+  position: relative;
+}
+
+.base-input__control {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  outline: none;
+}
+
+.base-input__control:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15);
+}
+
+.base-input__control--error {
+  border-color: #dc2626;
+}
+
+.base-input__error {
+  color: #dc2626;
+  font-size: 0.875rem;
+}
+</style>

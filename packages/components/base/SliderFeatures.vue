@@ -3,6 +3,58 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 // Props for customization
 const props = defineProps({
+  rootClass: {
+    type: String,
+    default: ''
+  },
+  containerClass: {
+    type: String,
+    default: ''
+  },
+  titleClass: {
+    type: String,
+    default: ''
+  },
+  subtitleClass: {
+    type: String,
+    default: ''
+  },
+  frameClass: {
+    type: String,
+    default: ''
+  },
+  trackClass: {
+    type: String,
+    default: ''
+  },
+  slideClass: {
+    type: String,
+    default: ''
+  },
+  prevButtonClass: {
+    type: String,
+    default: ''
+  },
+  nextButtonClass: {
+    type: String,
+    default: ''
+  },
+  dotsClass: {
+    type: String,
+    default: ''
+  },
+  dotClass: {
+    type: String,
+    default: ''
+  },
+  activeDotClass: {
+    type: String,
+    default: ''
+  },
+  inactiveDotClass: {
+    type: String,
+    default: ''
+  },
   title: {
     type: String,
     default: ''
@@ -64,41 +116,39 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <section class="py-20 px-4 bg-white">
-    <div class="max-w-5xl mx-auto">
-      <h2 class="text-3xl font-bold text-center text-slate-800 mb-4">
+  <section :class="rootClass">
+    <div :class="containerClass">
+      <h2 :class="titleClass">
         {{ title }}
       </h2>
-      <p class="text-center text-slate-600 mb-12">
+      <p :class="subtitleClass">
         {{ subtitle }}
       </p>
 
-      <div class="flex items-center gap-4">
-        <!-- Prev button -->
+      <div>
         <button @click="prevSlide"
-          class="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-slate-50 transition"
+          :class="prevButtonClass"
           aria-label="Previous slide">
           <span class="text-xl">←</span>
         </button>
 
-        <!-- Slides container -->
-        <div class="flex-1 overflow-hidden rounded-2xl shadow-2xl bg-slate-100">
-          <div class="flex transition-transform duration-500 ease-in-out will-change-transform"
+        <div :class="frameClass">
+          <div :class="trackClass"
             :style="{ transform: `translateX(-${currentSlide * 100}%)` }">
-            <div v-for="obj in subjects" :key="obj.id" class="min-w-full flex-shrink-0 px-4 py-6">
-              <div class="mx-auto flex min-h-[320px] max-h-[420px] w-full max-w-4xl items-center justify-center rounded-3xl bg-slate-200 relative p-8">
-                <div class="text-center p-4">
-                  <div class="w-24 h-24 mx-auto mb-4 bg-slate-300 rounded-full flex items-center justify-center">
+            <div v-for="obj in subjects" :key="obj.id" :class="slideClass">
+              <div>
+                <div>
+                  <div>
                     <span class="text-4xl">📱</span>
                   </div>
-                  <h3 class="text-xl font-semibold text-slate-600 mb-2">
+                  <h3>
                     {{ obj.title }}
                   </h3>
-                  <p class="text-slate-500">
+                  <p>
                     {{ obj.description }}
                   </p>
-                  <div v-if="obj.image" class="bg-slate-200 relative mt-4 rounded-lg overflow-hidden">
-                    <img :src="obj.image" :alt="obj.title" class="w-full max-h-64 object-contain" />
+                  <div v-if="obj.image">
+                    <img :src="obj.image" :alt="obj.title" />
                   </div>
                 </div>
               </div>
@@ -106,19 +156,16 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Next button -->
         <button @click="nextSlide"
-          class="flex-shrink-0 flex items-center justify-center w-12 h-12 bg-white rounded-full shadow-lg hover:bg-slate-50 transition"
+          :class="nextButtonClass"
           aria-label="Next slide">
           <span class="text-xl">→</span>
         </button>
       </div>
 
-      <!-- Dots indicator -->
-      <div class="flex justify-center gap-2 mt-6">
+      <div :class="dotsClass">
         <button v-for="(screenshot, index) in subjects" :key="screenshot.id" @click="goToSlide(index)"
-          class="h-3 rounded-full transition-all duration-300"
-          :class="currentSlide === index ? 'bg-blue-600 w-8' : 'bg-slate-300 w-3'"></button>
+          :class="currentSlide === index ? [dotClass, activeDotClass] : [dotClass, inactiveDotClass]"></button>
       </div>
     </div>
   </section>

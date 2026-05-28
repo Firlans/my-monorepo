@@ -1,22 +1,22 @@
 <template>
-  <div class="flex items-center gap-3">
+  <div :class="rootClass">
     <button @click="$emit('prev')"
-      class="w-9 h-9 flex items-center justify-center rounded-lg border bg-white hover:bg-slate-50"
+      :class="prevButtonClass"
       aria-label="Previous month">
       ‹
     </button>
 
-    <div class="text-center min-w-[160px]">
-      <p class="text-sm text-slate-500">
+    <div :class="contentClass">
+      <p :class="slotClass">
         <slot></slot>
       </p>
-      <p class="font-semibold text-slate-800">
+      <p :class="labelClass">
         {{ label }}
       </p>
     </div>
 
     <button @click="$emit('next')"
-      class="w-9 h-9 flex items-center justify-center rounded-lg border bg-white hover:bg-slate-50"
+      :class="nextButtonClass"
       aria-label="Next month">
       ›
     </button>
@@ -28,6 +28,30 @@ defineProps({
   label: {
     type: String,
     required: true
+  },
+  rootClass: {
+    type: String,
+    default: ''
+  },
+  contentClass: {
+    type: String,
+    default: ''
+  },
+  slotClass: {
+    type: String,
+    default: ''
+  },
+  labelClass: {
+    type: String,
+    default: ''
+  },
+  prevButtonClass: {
+    type: String,
+    default: ''
+  },
+  nextButtonClass: {
+    type: String,
+    default: ''
   }
 })
 
