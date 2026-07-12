@@ -119,11 +119,19 @@ const showCalculator = ref(false)
 
 const checkMobile = () => {
   if (typeof window !== 'undefined') {
-    isMobile.value = window.innerWidth < 768
+    const isMobileViewport = window.innerWidth < 768
+    const isMobileAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    isMobile.value = isMobileViewport || isMobileAgent
   }
 }
 
 const onFocus = () => {
+  if (isMoneyType.value && isMobile.value) {
+    showCalculator.value = true
+  }
+}
+
+const onInputClick = () => {
   if (isMoneyType.value && isMobile.value) {
     showCalculator.value = true
   }
@@ -273,11 +281,12 @@ const onInvalid = (event) => {
     </label>
 
     <div :class="fieldWrapperClass">
-      <input ref="inputRef" :type="inputType" :inputmode="inputMode" :value="displayValue" :placeholder="placeholder" :class="computedClass"
+      <input ref="inputRef" :type="inputType" :inputmode="inputMode" :readonly="isMoneyType && isMobile ? true : undefined" :value="displayValue" :placeholder="placeholder" :class="computedClass"
         :required="required"
         @input="onInput"
         @blur="onBlur"
         @focus="onFocus"
+        @click="onInputClick"
         @invalid="onInvalid" />
 
       <Teleport to="body">
