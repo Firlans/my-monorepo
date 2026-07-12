@@ -76,14 +76,29 @@ const inputRef = ref(null)
 const isMoneyType = computed(() => props.type === 'money')
 
 const normalizeMoneyValue = (value) => {
-  const digits = String(value ?? '').replace(/\D/g, '')
+  const digits = String(value ?? '').replace(/[^\d+\-*/()]/g, '')
   return digits
 }
 
 const formatMoneyDisplay = (value) => {
   const digits = normalizeMoneyValue(value)
   if (!digits) return ''
+  if (/[-+*/()]/.test(digits)) {
+    return digits
+  }
   return new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 }).format(Number(digits))
+}
+
+const evaluateMath = (expr) => {
+  try {
+    const sanitized = String(expr).replace(/[^\d+\-*/()]/g, '')
+    if (!sanitized) return ''
+    // eslint-disable-next-line no-new-func
+    const result = new Function('return ' + sanitized)()
+    return Number.isFinite(result) ? String(Math.floor(result)) : ''
+  } catch (e) {
+    return expr
+  }
 }
 
 const displayValue = computed(() => {
@@ -151,8 +166,14 @@ const onInput = (event) => {
   emit('update:modelValue', event.target.value)
 }
 
-const onBlur = () => {
+const onBlur = (event) => {
   touched.value = true
+  if (isMoneyType.value && event && event.target) {
+    const evaluated = evaluateMath(event.target.value)
+    const normalized = normalizeMoneyValue(evaluated)
+    emit('update:modelValue', normalized)
+    event.target.value = formatMoneyDisplay(normalized)
+  }
 }
 
 const onInvalid = (event) => {
