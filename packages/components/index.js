@@ -1,3 +1,5 @@
+export { default as BaseButton } from './base/BaseButton.vue'
+export { default as FormFeatures } from './features/FormFeatures.vue'
 export { default as BaseInput } from './base/BaseInput.vue'
 export { default as BaseLookup } from './base/BaseLookup.vue'
 export { default as BaseRoll } from './base/BaseRoll.vue'
